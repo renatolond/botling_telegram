@@ -1,16 +1,14 @@
-require 'telegram_bot'
+require 'telegram/bot'
 
-bot = TelegramBot.new(token: ENV['BOT_TOKEN'])
-bot.get_updates(fail_silently: true) do |message|
-	puts "@#{message.from.username}: #{message.text}"
-	command = message.get_command_for(bot)
+bot_name = "Botling Telegram Delivery Bot (Alpha)"
 
-	message.reply do |reply|
-		case command
-		when /ajuda/i
-			reply.text = "Botling Telegram Delivery bot (ALPHA)"
+Telegram::Bot::Client.run(ENV['BOT_TOKEN']) do |bot|
+	bot.listen do |message|
+		case message.text
+			when '/start'
+				bot.api.send_message(chat_id: message.chat.id, text: "Bem vindo ao #{bot_name}!\nUse /ajuda pra saber os comandos disponíveis!")
+			when '/ajuda'
+				bot.api.send_message(chat_id: message.chat.id, text: "#{bot_name}")
 		end
-		puts "sending #{reply.text.inspect} to @#{message.from.username}"
-		reply.send_with(bot)
 	end
 end
