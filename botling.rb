@@ -1,6 +1,6 @@
 require 'telegram/bot'
 
-bot_name = "Botling Telegram Delivery Bot (Alpha)"
+bot_name = "Botling (Telegram Delivery Bot version - Alpha)"
 
 Telegram::Bot::Client.run(ENV['BOT_TOKEN']) do |bot|
 	bot.listen do |message|
