@@ -21,7 +21,7 @@ def ficha(message, bot, parameters)
 			bot.api.send_message(chat_id: message.chat.id, text: "Não achei a ficha pra essa pessoa, #{handle}.")
 		end
 	else
-		bot.api.send_message(chat_id: message.chat.id, text: "Ficha de #{0}")
+		bot.api.send_message(chat_id: message.chat.id, text: "Ficha de #{user.name}")
 	end
 end
 
