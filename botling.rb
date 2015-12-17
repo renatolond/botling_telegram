@@ -18,12 +18,12 @@ def ficha(message, bot, parameters)
 
 	if(user == nil) then
 		if parameters == nil then
-			bot.api.send_message(chat_id: message.chat.id, text: "Ahhh. Você ainda não tem ficha comigo. Que tal se cadastrar?")
+			bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ahhh. Você ainda não tem ficha comigo. Que tal se cadastrar?")
 		else
-			bot.api.send_message(chat_id: message.chat.id, text: "Não achei a ficha pra essa pessoa, #{handle}.")
+			bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Não achei a ficha pra essa pessoa, #{handle}.")
 		end
 	else
-		bot.api.send_message(chat_id: message.chat.id, text: "Ficha de #{user.name}")
+		bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ficha de #{user.name}")
 	end
 end
 
@@ -33,15 +33,17 @@ Telegram::Bot::Client.run(ENV['BOT_TOKEN'], logger: logger) do |bot|
 		begin
 			case command
 				when '/start'
-					bot.api.send_message(chat_id: message.chat.id, text: "Bem vindo ao #{bot_name}!\nUse /ajuda pra saber os comandos disponíveis!")
+					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: %Q(Bem vindo ao #{bot_name}!
+
+Use /ajuda pra saber os comandos disponíveis!))
 				when '/ajuda'
-					bot.api.send_message(chat_id: message.chat.id, text: %Q(#{bot_name}
+					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: %Q(#{bot_name}
 
 /ficha - Para mostrar sua ficha ou de outro usuário))
 				when '/ficha'
 					ficha(message, bot, parameters)
 				when '/online'
-					bot.api.send_message(chat_id: message.chat.id, text: "Tô aqui online desde #{online_at.strftime("%H:%M de %d/%m/%Y")}.")
+					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Tô aqui online desde #{online_at.strftime("%H:%M de %d/%m/%Y")}.")
 			end
 		rescue => e
 			logger.error "Something went wrong! #{e}"
