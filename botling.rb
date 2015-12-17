@@ -44,6 +44,16 @@ Use /ajuda pra saber os comandos disponíveis!))
 					ficha(message, bot, parameters)
 				when '/online'
 					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Tô aqui online desde #{online_at.strftime("%H:%M de %d/%m/%Y")}.")
+				when '/caldeirao_furado'
+					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Os elfos ainda não implementaram esse comando. :(')
+				when '/duelos'
+					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Os elfos ainda não implementaram esse comando. :(')
+				when '/animais'
+					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Os elfos ainda não implementaram esse comando. :(')
+				when '/rank'
+					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Os elfos ainda não implementaram esse comando. :(')
+				when '/gringotes'
+					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Os elfos ainda não implementaram esse comando. :(')
 			end
 		rescue => e
 			logger.error "Something went wrong! #{e}"
