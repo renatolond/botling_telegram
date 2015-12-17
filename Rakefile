@@ -1,4 +1,4 @@
-require './environment'
+require_relative 'environment'
 
 namespace :db do
 	desc "Run migrations"

@@ -1,4 +1,4 @@
-require './environment'
+require_relative '../environment'
 
 House.create :name => "Corvinal"
 House.create :name => "Grifinória"

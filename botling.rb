@@ -1,10 +1,18 @@
 require 'telegram/bot'
-require './environment'
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+	opts.banner = "Usage: botling.rb [options]"
+	opts.on('-p', '--script-path PATH', 'The path where the script is located') { |v| ENV['PWD'] = v }
+end.parse!
+
+require_relative 'environment'
 
 bot_name = "Botling (Telegram Delivery Bot version - Alpha)"
 online_at = Time.now
 
-logger = Logger.new('botling.log')
+logger = Logger.new("#{ENV.fetch('PWD')}/botling.log")
 
 def ficha(message, bot, parameters)
 	user = nil
