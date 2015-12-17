@@ -14,3 +14,6 @@ ActiveRecord::Base.establish_connection(configuration['development'])
 Dir.glob("#{ENV.fetch('PWD')}/models/*.rb").each do |file|
 	require file
 end
+Dir.glob("#{ENV.fetch('PWD')}/lib/*.rb").each do |file|
+	require file
+end
