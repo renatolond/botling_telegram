@@ -35,7 +35,9 @@ Telegram::Bot::Client.run(ENV['BOT_TOKEN'], logger: logger) do |bot|
 				when '/start'
 					bot.api.send_message(chat_id: message.chat.id, text: "Bem vindo ao #{bot_name}!\nUse /ajuda pra saber os comandos disponíveis!")
 				when '/ajuda'
-					bot.api.send_message(chat_id: message.chat.id, text: "#{bot_name}")
+					bot.api.send_message(chat_id: message.chat.id, text: %Q(#{bot_name}
+
+/ficha - Para mostrar sua ficha ou de outro usuário))
 				when '/ficha'
 					ficha(message, bot, parameters)
 				when '/online'
