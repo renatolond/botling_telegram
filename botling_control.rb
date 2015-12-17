@@ -1,3 +1,3 @@
 require 'daemons'
 
-Daemons.run('botling.rb')
+Daemons.run('bot_main.rb')
