@@ -1,9 +1,9 @@
 GIT
   remote: git://github.com/atipugin/telegram-bot-ruby.git
-  revision: 47879f998155c6304356bf652938290db4cf596c
-  ref: v0.3.5
+  revision: e229d1b918034d28b70b6a6f9283a39bdfbdf1f4
+  ref: v0.3.11
   specs:
-    telegram-bot-ruby (0.3.5)
+    telegram-bot-ruby (0.3.11)
       httmultiparty
       persistent_httparty
       virtus
@@ -42,7 +42,7 @@ GEM
       httparty (>= 0.7.3)
       mimemagic
       multipart-post
-    httparty (0.13.5)
+    httparty (0.13.7)
       json (~> 1.8)
       multi_xml (>= 0.5.2)
     i18n (0.7.0)
