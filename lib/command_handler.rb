@@ -16,7 +16,6 @@ class CommandHandler
 		if command[-@bot_nickname_str.size..-1] == @bot_nickname_str
 			command = command[0..-@bot_nickname_str.size-1]
 		end
-		p command
 		to_call = @commands[command]
 		@commands[command].call(message, parameters) unless to_call == nil
 	end
