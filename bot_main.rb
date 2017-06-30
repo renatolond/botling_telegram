@@ -22,10 +22,10 @@ Telegram::Bot::Client.run(ENV['BOT_TOKEN'], logger: logger) do |bot|
 	command_handler.bot = bot
 	bot.listen do |message|
 		begin
-			if botling.pending.has_key?(message.from.id)
+			if botling.pending.has_key?(message.from.id) && message.chat.type == 'private'
 				to_call = botling.pending[message.from.id]
 				botling.pending.delete(message.from.id)
-				to_call.call(message, nil)
+				to_call[:method].call(message, to_call[:parameters])
 			else
 				command, parameters = message.text.split(" ", 2)
 				case command

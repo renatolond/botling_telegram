@@ -15,6 +15,10 @@ class Botling
 		@bot = value
 	end
 
+	def set_pending(message, to_call, parameters)
+		pending[message.from.id] = {method: to_call, parameters: parameters}
+	end
+
 	def start(message, parameters)
 		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: %Q(Bem vindo ao #{@@bot_name}!
 
@@ -42,6 +46,8 @@ Use /ajuda pra saber os comandos disponíveis!))
 	end
 
 	def cadastrar(message, parameters)
+		return unless check_private(message)
+
 		if User.find_by_id(message.from.id) != nil
 			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Opa! Você já tem um cadastro! Usa /ficha pra ver :)')
 			return
@@ -49,7 +55,7 @@ Use /ajuda pra saber os comandos disponíveis!))
 
 		u = User.create(id: message.from.id, level: 1, handle: message.from.username)
 		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ok! Quase lá. Como você gostaria de ser chamado? Quero dizer, qual é o seu nome?")
-		pending[message.from.id] = method(:set_name)
+		set_pending(message, method(:set_name), nil)
 	end
 
 	def set_name(message, parameters)
@@ -61,7 +67,7 @@ Use /ajuda pra saber os comandos disponíveis!))
 
 		u.name = message.text
 		u.save
-		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ok! De agora em diante você vai ser chamado de #{u.name}")
+		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ok! De agora em diante vou te chamar de #{u.name}")
 	end
 
 	def ficha(message, parameters)
@@ -71,6 +77,7 @@ Use /ajuda pra saber os comandos disponíveis!))
 			user = User.find_by_id(message.from.id)
 		else
 			handle = parameters.split(" ").first
+			handle = handle[1..-1] if handle[0] == '@'
 			user = User.find_by_handle(handle)
 		end
 
@@ -83,6 +90,70 @@ Use /ajuda pra saber os comandos disponíveis!))
 		else
 			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ficha de #{user.name}")
 		end
+	end
+
+	def check_private(message)
+		if(message.chat.type != 'private')
+			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Hm, sabe o que é? Eu prefiro esse tipo de coisa no privado, se é que você me entende ;)')
+			return false
+		end
+		true
+	end
+
+	def user_exists(message)
+		user = User.find_by_id(message.from.id)
+		if(user == nil) then
+			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Opa. Você precisa se cadastrar primeiro.')
+			return false
+		end
+		true
+	end
+
+	def chapeu_seletor(message, parameters)
+		return unless check_private(message)
+		return unless user_exists(message)
+		user = User.find_by_id(message.from.id)
+		if(user.house != nil) then
+			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Desculpe, mas uma casa é pra vida toda, e você já é da #{user.house.name}")
+			return
+		end
+
+		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Ok! O chapéu vai lhe fazer algumas perguntas, responda honestamente e lembre-se que não é possível voltar atrás.')
+
+		selected = chapeu_seletor_pergunta(message, parameters, 1)
+
+		set_pending(message, method(:chapeu_seletor_resposta), {question: 1, selected: selected, chances: {}})
+	end
+
+	def chapeu_seletor_pergunta(message, parameters, question_number)
+		SortingHat.question(question_number, @bot, message, parameters)
+	end
+
+	def chapeu_seletor_resposta(message, parameters)
+		chances = SortingHat.answer(parameters[:question], parameters[:selected], message.text, parameters[:chances])
+		@bot.logger.warn(chances.to_s)
+		if(chances == nil)
+			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Opa. Não, acho que você entendeu errado. Deixa eu te perguntar outra vez.')
+			SortingHat.question_ask(parameters[:question], @bot, message, parameters[:selected])
+			set_pending(message, method(:chapeu_seletor_resposta), {question: parameters[:question], selected: parameters[:selected], chances: parameters[:chances]})
+			return
+		end
+		parameters[:question] = parameters[:question]+1
+		if(parameters[:question] > SortingHat.num_questions)
+			return chapeu_seletor_resultado(message, parameters)
+		end
+		selected = SortingHat.question(parameters[:question], @bot, message, parameters)
+
+		set_pending(message, method(:chapeu_seletor_resposta), {question: parameters[:question], selected: selected, chances: chances})
+	end
+
+	def chapeu_seletor_resultado(message, parameters)
+		house = SortingHat.result(parameters[:chances])
+		user = User.find_by_id(message.from.id)
+		user.house_id = house[:id]
+		user.save
+		@bot.api.send_message(chat_id: message.chat.id, text: "O chapéu seletor pensa um pouco. E diz: \"#{house[:name]}!\" Seja bem-vindo!")
+		@bot.api.send_message(chat_id: ENV['JOAKAROW_ID'], text: "Um novo aluno entra no grande salão; ele coloca o chapéu seletor. O chapéu seletor pensa um pouco e exclama: #{house[:name]}! Seja bem vindo, #{user.name_to_call}")
 	end
 
 	def nao_implementado(message, parameters)
@@ -99,5 +170,6 @@ Use /ajuda pra saber os comandos disponíveis!))
 		command_handler.register('rank', method(:nao_implementado))
 		command_handler.register('gringotes', method(:nao_implementado))
 		command_handler.register('cadastrar', method(:cadastrar))
+		command_handler.register('chapeu_seletor', method(:chapeu_seletor))
 	end
 end
