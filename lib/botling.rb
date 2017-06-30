@@ -2,7 +2,9 @@ class Botling
 	@@bot_name = "Botling (Telegram Delivery Bot version - Alpha)"
 	@@bot_nickname = "botling_bot"
 
+	attr_reader :pending
 	def initialize
+		@pending = {}
 	end
 
 	def bot_nickname
