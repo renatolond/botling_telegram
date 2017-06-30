@@ -21,10 +21,47 @@ class Botling
 Use /ajuda pra saber os comandos disponíveis!))
 	end
 
-	def ajuda(message, parameters)
+	def registered_help(message)
 		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: %Q(#{@@bot_name}
 
 /ficha - Para mostrar sua ficha ou de outro usuário))
+	end
+
+	def unregistered_help(message)
+		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: %Q(#{@@bot_name}
+
+/cadastrar - Para se cadastrar e usar meus comandos secretos ;\)))
+	end
+
+	def ajuda(message, parameters)
+		if User.find_by_id(message.from.id) == nil
+			unregistered_help(message)
+		else
+			registered_help(message)
+		end
+	end
+
+	def cadastrar(message, parameters)
+		if User.find_by_id(message.from.id) != nil
+			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Opa! Você já tem um cadastro! Usa /ficha pra ver :)')
+			return
+		end
+
+		u = User.create(id: message.from.id, level: 1, handle: message.from.username)
+		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ok! Quase lá. Como você gostaria de ser chamado? Quero dizer, qual é o seu nome?")
+		pending[message.from.id] = method(:set_name)
+	end
+
+	def set_name(message, parameters)
+		u = User.find_by_id(message.from.id)
+		if u == nil
+			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Hm. Estranho. Fiquei confuso. Quer tentar de novo?')
+			return
+		end
+
+		u.name = message.text
+		u.save
+		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ok! De agora em diante você vai ser chamado de #{u.name}")
 	end
 
 	def ficha(message, parameters)
@@ -61,5 +98,6 @@ Use /ajuda pra saber os comandos disponíveis!))
 		command_handler.register('animais', method(:nao_implementado))
 		command_handler.register('rank', method(:nao_implementado))
 		command_handler.register('gringotes', method(:nao_implementado))
+		command_handler.register('cadastrar', method(:cadastrar))
 	end
 end
