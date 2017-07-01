@@ -163,7 +163,7 @@ Magia: #{user.level}))
 		user.house_id = house[:id]
 		user.save
 		@bot.api.send_message(chat_id: message.chat.id, text: "O chapéu seletor pensa um pouco. E diz: \"#{house[:name]}!\" Seja bem-vindo!")
-		@bot.api.send_message(chat_id: ENV['JOAKAROW_ID'], text: "Um novo aluno entra no grande salão; ele coloca o chapéu seletor. O chapéu seletor pensa um pouco e exclama: #{house[:name]}! Seja bem vindo, #{user.name_to_call}")
+		@bot.api.send_message(chat_id: ENV['JOAKAROW_ID'], text: "Um novo aluno entra no grande salão e coloca o chapéu seletor. O chapéu seletor pensa um pouco e exclama: #{house[:name]}! Lhe desejo boas vindas, #{user.name_to_call}")
 	end
 
 	def nao_implementado(message, parameters)
