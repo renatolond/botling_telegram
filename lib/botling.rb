@@ -92,7 +92,13 @@ Use /ajuda pra saber os comandos disponíveis!))
 				@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Não achei a ficha pra essa pessoa, #{handle}.")
 			end
 		else
-			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ficha de #{user.name}")
+			if(user.house != nil)
+				house_message = "\nCasa: #{user.house.name}"
+			else
+				house_message = "\nO chapéu seletor ainda não determinou sua casa."
+			end
+			@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: %Q(Ficha de #{user.name}#{house_message}
+Magia: #{user.level}))
 		end
 	end
 
