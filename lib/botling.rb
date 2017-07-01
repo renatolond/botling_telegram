@@ -25,10 +25,13 @@ class Botling
 Use /ajuda pra saber os comandos disponíveis!))
 	end
 
-	def registered_help(message)
+	def registered_help(message, user)
+		if(user.house == nil)
+			chapeu_seletor = "\n/chapeu_seletor - Para fazer o teste que irá determinar a sua casa para a vida toda!"
+		end
 		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: %Q(#{@@bot_name}
 
-/ficha - Para mostrar sua ficha ou de outro usuário))
+/ficha - Para mostrar sua ficha ou de outro usuário#{chapeu_seletor}))
 	end
 
 	def unregistered_help(message)
@@ -38,10 +41,11 @@ Use /ajuda pra saber os comandos disponíveis!))
 	end
 
 	def ajuda(message, parameters)
-		if User.find_by_id(message.from.id) == nil
+		user = User.find_by_id(message.from.id)
+		if user == nil
 			unregistered_help(message)
 		else
-			registered_help(message)
+			registered_help(message, user)
 		end
 	end
 
