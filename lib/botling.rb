@@ -72,6 +72,7 @@ Use /ajuda pra saber os comandos disponíveis!))
 		u.name = message.text
 		u.save
 		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Ok! De agora em diante vou te chamar de #{u.name}")
+		ajuda(message, parameters)
 	end
 
 	def ficha(message, parameters)
@@ -149,6 +150,7 @@ Magia: #{user.level}))
 			return
 		end
 		parameters[:question] = parameters[:question]+1
+		parameters[:chances] = chances
 		if(parameters[:question] > SortingHat.num_questions)
 			return chapeu_seletor_resultado(message, parameters)
 		end
