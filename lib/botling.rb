@@ -168,6 +168,14 @@ Magia: #{user.level}))
 		@bot.api.send_message(chat_id: ENV['JOAKAROW_ID'], text: "Um novo aluno entra no grande salão e coloca o chapéu seletor. O chapéu seletor pensa um pouco e exclama: #{house[:name]}! Lhe desejo boas vindas, #{user.name_to_call}")
 	end
 
+	def puppeteer(message, parameters)
+		if(message.from.id.to_s != ENV['MASTER_ID'])
+			@bot.logger.error("Tentativa de puppeteer vinda do UID #{message.from.id}")
+			return nao_implementado(message, parameters)
+		end
+		@bot.api.send_message(chat_id: ENV['JOAKAROW_ID'], text: parameters)
+	end
+
 	def nao_implementado(message, parameters)
 		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Os elfos ainda não implementaram esse comando. :(')
 	end
@@ -183,5 +191,6 @@ Magia: #{user.level}))
 		command_handler.register('gringotes', method(:nao_implementado))
 		command_handler.register('cadastrar', method(:cadastrar))
 		command_handler.register('chapeu_seletor', method(:chapeu_seletor))
+		command_handler.register('puppeteer', method(:puppeteer))
 	end
 end
