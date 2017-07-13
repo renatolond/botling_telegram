@@ -180,6 +180,20 @@ Magia: #{user.level}))
 		@bot.api.send_message(chat_id: ENV['JOAKAROW_ID'], text: parameters)
 	end
 
+	def stats(message, parameters)
+		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: %Q(Hm. No momento nós temos #{User.count} alunos.
+    - Grifinória: #{User.where('house_id = ?', SortingHat.house(:g)[:id]).count} alunos
+    - Corvinal: #{User.where('house_id = ?', SortingHat.house(:r)[:id]).count} alunos
+    - Lufa-Lufa: #{User.where('house_id = ?', SortingHat.house(:h)[:id]).count} alunos
+    - Sonserina: #{User.where('house_id = ?', SortingHat.house(:s)[:id]).count} alunos
+		E temos #{User.where('house_id is NULL').count} alunos que ainda não fizeram o teste do chapéu seletor.
+
+		O nosso aluno com maior magia tem nível #{User.maximum(:level)}
+
+		Eu estou online desde #{@online_at.strftime("%H:%M de %d/%m/%Y")}.
+))
+	end
+
 	def online(message, parameters)
 		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Tô aqui online desde #{@online_at.strftime("%H:%M de %d/%m/%Y")}.")
 	end
@@ -199,6 +213,7 @@ Magia: #{user.level}))
 		command_handler.register('cadastrar', method(:cadastrar))
 		command_handler.register('chapeu_seletor', method(:chapeu_seletor))
 		command_handler.register('puppeteer', method(:puppeteer))
+		command_handler.register('stats', method(:stats))
 		command_handler.register('online', method(:online))
 	end
 end
