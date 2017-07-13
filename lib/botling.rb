@@ -15,6 +15,10 @@ class Botling
 		@bot = value
 	end
 
+	def online_at=(value)
+		@online_at = value
+	end
+
 	def set_pending(message, to_call, parameters)
 		pending[message.from.id] = {method: to_call, parameters: parameters}
 	end
@@ -176,6 +180,9 @@ Magia: #{user.level}))
 		@bot.api.send_message(chat_id: ENV['JOAKAROW_ID'], text: parameters)
 	end
 
+	def online(message, parameters)
+		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Tô aqui online desde #{@online_at.strftime("%H:%M de %d/%m/%Y")}.")
+	end
 	def nao_implementado(message, parameters)
 		@bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: 'Os elfos ainda não implementaram esse comando. :(')
 	end
@@ -192,5 +199,6 @@ Magia: #{user.level}))
 		command_handler.register('cadastrar', method(:cadastrar))
 		command_handler.register('chapeu_seletor', method(:chapeu_seletor))
 		command_handler.register('puppeteer', method(:puppeteer))
+		command_handler.register('online', method(:online))
 	end
 end

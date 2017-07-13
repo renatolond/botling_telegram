@@ -9,11 +9,10 @@ end.parse!
 
 require_relative 'environment'
 
-online_at = Time.now
-
 logger = Logger.new("#{ENV.fetch('PWD')}/botling.log")
 
 botling = Botling.new
+botling.online_at = Time.now
 command_handler = CommandHandler.new(botling.bot_nickname)
 botling.register_commands(command_handler)
 
@@ -28,10 +27,6 @@ Telegram::Bot::Client.run(ENV['BOT_TOKEN'], logger: logger) do |bot|
 				to_call[:method].call(message, to_call[:parameters])
 			else
 				command, parameters = message.text.split(" ", 2)
-				case command
-				when '/online'
-					bot.api.send_message(chat_id: message.chat.id, reply_to_message_id: message.message_id, text: "Tô aqui online desde #{online_at.strftime("%H:%M de %d/%m/%Y")}.")
-				end
 				command_handler.handle(command, parameters, message)
 			end
 		rescue => e
