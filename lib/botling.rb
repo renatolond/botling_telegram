@@ -83,7 +83,7 @@ Use /ajuda pra saber os comandos disponíveis!))
 		else
 			handle = parameters.split(" ").first
 			handle = handle[1..-1] if handle[0] == '@'
-			user = User.find_by_handle(handle)
+			user = User.where('lower(handle) = ?', (handle.downcase)).first
 		end
 
 		if(user == nil) then
